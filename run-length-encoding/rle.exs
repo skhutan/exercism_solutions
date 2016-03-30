@@ -12,8 +12,6 @@ defmodule RunLengthEncoder do
     |> String.split("", trim: true)
     |> Enum.reduce("", fn(letter, acc) ->
       if String.last(acc) === letter do
-        
-        #get last number by regex
         re = ~r/(\d+)[A-Z]$/
         encode_number = Regex.run(re, acc, capture: :all_but_first) |> List.first
         Regex.replace(re, acc, increment_encoding(encode_number) <> letter)
@@ -29,6 +27,18 @@ defmodule RunLengthEncoder do
 
   @spec decode(String.t) :: String.t
   def decode(string) do
-
+    Regex.scan(~r/(\d+)[A-Z]/, string)
+    |> Enum.reduce("", fn([code, number_string], acc) ->
+      number = String.to_integer(number_string)
+      letter = String.last(code)
+      acc <> decode_segment(letter, number - 1)
+    end)
+  end
+  
+  defp decode_segment(acc, 0) do
+    acc
+  end
+  defp decode_segment(acc, times) do
+    decode_segment(acc <> String.first(acc), times - 1)
   end
 end
