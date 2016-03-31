@@ -44,7 +44,19 @@ defmodule ListOps do
 
   @spec filter(list, (any -> as_boolean(term))) :: list
   def filter(l, f) do
-
+    _filter(l, f, [])
+  end
+  
+  defp _filter([], f, acc) do
+    reverse(acc)
+  end
+  
+  defp _filter([h|t], f, acc) do
+    if f.(h) do
+      _filter(t, f, [h | acc])
+    else
+      _filter(t, f, acc)
+    end
   end
 
   @type acc :: any
