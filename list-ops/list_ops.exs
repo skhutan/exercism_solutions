@@ -14,7 +14,6 @@ defmodule ListOps do
   defp _count([], acc) do
     acc
   end
-  
   defp _count([h|t], acc) do
     _count(t, acc+1)
   end
@@ -27,14 +26,20 @@ defmodule ListOps do
   defp _reverse([], acc) do
     acc
   end
-  
   defp _reverse([h|t], acc) do
     _reverse(t, [h|acc])
   end
 
   @spec map(list, (any -> any)) :: list
   def map(l, f) do
-
+    _map(l, f, [])
+  end
+  
+  defp _map([], f, acc) do
+    reverse(acc)
+  end
+  defp _map([h|t], f, acc) do
+    _map(t, f, [f.(h) | acc])
   end
 
   @spec filter(list, (any -> as_boolean(term))) :: list
