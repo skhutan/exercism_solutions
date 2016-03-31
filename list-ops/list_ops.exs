@@ -48,8 +48,8 @@ defmodule ListOps do
   def append(a, b), do: _append(a,b, [])
   
   defp _append([], [], acc), do: reverse(acc)
-  defp _append([], [h|t], acc), do: _append([], t, [h|acc])
   defp _append([h|t], [], acc), do: _append(t, [], [h|acc])
+  defp _append([], [h|t], acc), do: _append([], t, [h|acc])
   defp _append([h|t], b, acc), do: _append(t, b, [h|acc])
 
   @spec concat([[any]]) :: [any]
