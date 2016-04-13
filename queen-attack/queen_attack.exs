@@ -54,9 +54,4 @@ defmodule Queens do
         end
       end)
   end
-  
-  defp diagonal_attack?(queens) do
-    diagonal_moves(queens.white)
-    |> Enum.any?(&(&1 == queens.black))
-  end
 end
