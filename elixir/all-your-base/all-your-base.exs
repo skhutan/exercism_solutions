@@ -9,15 +9,15 @@ defmodule AllYourBase do
   when length(digits) == 0 or base_a < 2 or base_b < 2, do: nil
 
   def convert(digits, base_a, base_b) do
-    case from_digits(digits, base_a, 0) do
+    case to_number(digits, base_a, 0) do
       {:ok, number} -> to_digits(number, base_b, [])
       {:error, error} -> error
     end
   end
 
-  defp from_digits([], _, acc), do: {:ok, acc}
-  defp from_digits([h|_], b, acc) when h < 0 or h == b, do: {:error, nil}
-  defp from_digits([h|t], base, acc), do: from_digits(t, base, base * acc + h)
+  defp to_number([], _, acc), do: {:ok, acc}
+  defp to_number([h|_], b, _) when h < 0 or h == b, do: {:error, nil}
+  defp to_number([h|t], base, acc), do: to_number(t, base, base * acc + h)
 
   defp to_digits(n, base, acc) when n > 0 do
     to_digits(Integer.floor_div(n, base), base, [rem(n, base)] ++ acc)
