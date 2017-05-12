@@ -1,4 +1,7 @@
 defmodule Tournament do
+  @win %{mp: 1, w: 1, d: 0, l: 0, p: 3}
+  @draw %{mp: 1, w: 0, d: 1, l: 0, p: 1}
+  @loss %{mp: 1, w: 0, d: 0, l: 1, p: 0}
 
   @doc """
   Given `input` lines representing two teams and whether the first of them won,
@@ -23,26 +26,23 @@ defmodule Tournament do
     parts = String.split(match, ";")
     cond do
       Regex.run(~r/[^a-z;\s]/i, match) -> acc
-       length(parts) != 3 -> acc
-       true -> calc_scores(parts, acc)
+      length(parts) != 3 -> acc
+      true -> calc_scores(parts, acc)
     end
   end
 
   defp calc_scores([team1, team2, result], acc) do
     case result do
-      "win" -> update_team(acc, team1,  %{mp: 1, w: 1, d: 0, l: 0, p: 3}) |> update_team(team2,  %{mp: 1, w: 0, d: 0, l: 1, p: 0})
-      "draw" -> update_team(acc, team1,  %{mp: 1, w: 0, d: 1, l: 0, p: 1}) |> update_team(team2,  %{mp: 1, w: 0, d: 1, l: 0, p: 1})
-      "loss" -> update_team(acc, team1,  %{mp: 1, w: 0, d: 0, l: 1, p: 0}) |> update_team(team2,  %{mp: 1, w: 1, d: 0, l: 0, p: 3})
+      "win" -> update_team(acc, team1, @win) |> update_team(team2, @loss)
+      "draw" -> update_team(acc, team1, @draw) |> update_team(team2, @draw)
+      "loss" -> update_team(acc, team1, @loss) |> update_team(team2, @win)
       _ -> acc
     end
   end
 
   defp update_team(score_map, team, match_score) do
-    Map.update(score_map, team, match_score, fn(current_score) ->
-      Map.merge(current_score, match_score, fn(_, v1, v2) ->
-        v1 + v2
-      end)
-    end)
+    sum_scores = fn(_, v1, v2) -> v1 + v2 end
+    Map.update(score_map, team, match_score, &(Map.merge(&1, match_score, sum_scores)))
   end
 
   defp sort_scores(scores) do
